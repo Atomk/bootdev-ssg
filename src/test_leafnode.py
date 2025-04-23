@@ -23,6 +23,9 @@ class TestLeafNode(unittest.TestCase):
         node = create_bootdev_link()
         self.assertEqual(node.to_html(), '<a href="https://boot.dev">Boot.dev</a>')
 
+        node = LeafNode(None, "This is a text node.")
+        self.assertEqual(node.to_html(), "This is a text node.")
+
         # TODO test element with double quotes inside value
         # TODO Add more tests for different tag types.
 
