@@ -5,15 +5,16 @@ from htmlnode import HTMLNode
 class TestHTMLNode(unittest.TestCase):
     def test_constructor(self):
         node = HTMLNode()
-        self.assertEqual(node.tag, None)
-        self.assertEqual(node.value, None)
-        self.assertEqual(node.children, None)
-        self.assertEqual(node.props, None)
+        self.assertIsNone(node.tag)
+        self.assertIsNone(node.value)
+        self.assertIsNone(node.children)
+        self.assertIsNone(node.props)
 
-        node = HTMLNode("a", "Boot.dev", None, {"href":"https://boot.dev"})
+        node = HTMLNode(tag="a", value="Boot.dev", props={"href":"https://boot.dev"})
         self.assertEqual(node.tag, "a")
         self.assertEqual(node.value, "Boot.dev")
-        self.assertEqual(node.children, None)
+        self.assertIsNone(node.children)
+        self.assertIsNotNone(node.props)
         self.assertIn("href", node.props)
         self.assertEqual(node.props["href"], "https://boot.dev")
 

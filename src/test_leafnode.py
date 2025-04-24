@@ -12,7 +12,7 @@ class TestLeafNode(unittest.TestCase):
         node = create_bootdev_link()
         self.assertEqual(node.tag, "a")
         self.assertEqual(node.value, "Boot.dev")
-        self.assertEqual(node.children, None)
+        self.assertIsNone(node.children)
         self.assertIn("href", node.props)
         self.assertEqual(node.props["href"], "https://boot.dev")
 
@@ -28,6 +28,11 @@ class TestLeafNode(unittest.TestCase):
 
         # TODO test element with double quotes inside value
         # TODO Add more tests for different tag types.
+        # TODO if an attribute has a numerical value, it should still be sourrended by double quotes
+        # TODO only certain tags are allowed
+        # TODO tags and attributes must be lowercase letters only (no numbers, symbols)
+        # TODO every element can use only certain attributes
+        # TODO void elements (hr, br, image)
 
 
 if __name__ == "__main__":
