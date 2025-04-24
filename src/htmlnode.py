@@ -1,3 +1,16 @@
+def escape_html(html: str):
+    CONVERSION_TABLE = (
+        ("&", "&amp;"),
+        (">", "&gt;"),
+        ("<", "&lt;"),
+    )
+
+    escaped = html
+    for pair in CONVERSION_TABLE:
+        escaped = escaped.replace(pair[0], pair[1])
+    return escaped
+
+
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         """
@@ -20,6 +33,8 @@ class HTMLNode:
             return ""
         html_string = ""
         for key, val in self.props.items():
+            # HTML attributes must be separated by spaces
+            # TODO what if the value contains double quotes?
             html_string += f' {key}="{val}"'
         return html_string
 
@@ -32,10 +47,14 @@ class LeafNode(HTMLNode):
         super().__init__(tag, value, None, props)
 
     def to_html(self):
-        if self.tag is not None:
-            return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
-        else:
+        if self.tag is None:
             return self.value
+        if self.tag in ("img", "br", "hr"):
+            return f"<{self.tag}{self.props_to_html()} />"
+        if self.tag in ("code", "pre"):
+            return f"<{self.tag}{self.props_to_html()}>{escape_html(self.value)}</{self.tag}>"
+        else:
+            return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
 
 
 class ParentNode(HTMLNode):
@@ -43,7 +62,7 @@ class ParentNode(HTMLNode):
         super().__init__(tag, None, children, props)
 
     def to_html(self):
-        if self.tag == None:
+        if self.tag == None or self.tag == "":
             raise ValueError("A parent node must have a tag")
         if not isinstance(self.children, list):
             raise ValueError("`children` must be a list")
