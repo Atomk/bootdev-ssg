@@ -6,6 +6,7 @@ from markdown_parser import (
     extract_markdown_links,
     split_nodes_image,
     split_nodes_link,
+    text_to_textnodes,
 )
 
 
@@ -259,6 +260,39 @@ class TestLinkSplitting(unittest.TestCase):
                 TextNode(" and ![image](https://i.imgur.com/zjjcJKZ.png)", TextType.NORMAL),
             ],
             new_nodes,
+        )
+
+
+class TestTextToNodes(unittest.TestCase):
+    def test_basic(self):
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        self.assertListEqual(
+            text_to_textnodes(text),
+            [
+                TextNode("This is ", TextType.NORMAL),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.NORMAL),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.NORMAL),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.NORMAL),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.NORMAL),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ]
+        )
+
+        # sequence of duplicated mixed blocks
+        text = "_italic_**text**`code block`_italic_`code block`"
+        self.assertListEqual(
+            text_to_textnodes(text),
+            [
+                TextNode("italic", TextType.ITALIC),
+                TextNode("text", TextType.BOLD),
+                TextNode("code block", TextType.CODE),
+                TextNode("italic", TextType.ITALIC),
+                TextNode("code block", TextType.CODE),
+            ]
         )
 
 
