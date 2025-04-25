@@ -39,7 +39,9 @@ def extract_markdown_images(text) -> list[tuple]:
 
 
 def extract_markdown_links(text) -> list[tuple]:
+    # a link cannot be preceded by an exclamation mark
+    negative_lookbehind = "(?<!!)"
     text_part = r"\[(.*?)\]"
     url_part = r"\((.*?)\)"
-    pattern = text_part + url_part
+    pattern = negative_lookbehind + text_part + url_part
     return re.findall(pattern, text)
