@@ -16,9 +16,9 @@ class TestTextNode(unittest.TestCase):
 
     def test_repr(self):
         node = TextNode("Italic text", TextType.ITALIC)
-        self.assertEqual(str(node), "TextNode(Italic text, TextType.ITALIC, None)")
+        self.assertEqual(str(node), "TextNode('Italic text', TextType.ITALIC, None)")
         image = TextNode("An image", TextType.IMAGE, "https://i.imgur.com/vclKmAP.jpeg")
-        self.assertEqual(str(image), "TextNode(An image, TextType.IMAGE, https://i.imgur.com/vclKmAP.jpeg)")
+        self.assertEqual(str(image), "TextNode('An image', TextType.IMAGE, 'https://i.imgur.com/vclKmAP.jpeg')")
 
 
 if __name__ == "__main__":
