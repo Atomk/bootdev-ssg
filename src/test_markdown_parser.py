@@ -1,6 +1,10 @@
 import unittest
 from textnode import TextNode, TextType
-from markdown_parser import split_nodes_delimiter
+from markdown_parser import (
+    split_nodes_delimiter,
+    extract_markdown_images,
+    extract_markdown_links,
+)
 
 
 class TestMarkdownParser(unittest.TestCase):
@@ -95,6 +99,39 @@ class TestMarkdownParser(unittest.TestCase):
         # nested delimiters
         old_node = TextNode("Markdown **allows _nested_ delimiters**.", TextType.NORMAL)
         # TODO
+
+
+class TestLinkExtraction(unittest.TestCase):
+    def test_image(self):
+        text = "Text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        result = extract_markdown_images(text)
+        expected = [
+            ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
+            ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")
+        ]
+        self.assertListEqual(result, expected)
+
+    def test_link(self):
+        text = "A link to a [rick roll](https://i.imgur.com/aKaOqIh.gif) and [obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        result = extract_markdown_links(text)
+        expected = [
+            ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
+            ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")
+        ]
+        self.assertListEqual(result, expected)
+
+    def test_mixed(self):
+        # should not match the link
+        matches = extract_markdown_images(
+            "Text with an ![image](https://i.imgur.com/zjjcJKZ.png) and a [link](https://example.com)"
+        )
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+        # should not match the image
+        matches = extract_markdown_links(
+            "Text with an ![image](https://i.imgur.com/zjjcJKZ.png) and a [link](https://example.com)"
+        )
+        self.assertListEqual([("link", "https://example.com")], matches)
 
 
 if __name__ == "__main__":
