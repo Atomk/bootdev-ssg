@@ -43,7 +43,7 @@ def is_ordered_list(block: str):
 def block_to_block_type(block: str) -> BlockType:
     if is_heading(block):
         return BlockType.HEADING
-    elif block.startswith("```") and block.endswith("```"):
+    elif block.startswith("```") and block.rstrip().endswith("```"):
         return BlockType.CODE
     elif _every_line_starts_with(block, ">"):
         return BlockType.QUOTE
