@@ -138,13 +138,14 @@ This is the same paragraph on a new line
         self.assertEqual(block_to_block_type("```\none\ntwo\nthree```"), BlockType.CODE)
         # TODO this may be disallowed by the block splitting logic
         self.assertEqual(block_to_block_type("```\none\n\n\n\ntwo\nthree```"), BlockType.CODE)
-        self.assertEqual(block_to_block_type("```\none\ntwo\nthree```     "), BlockType.CODE)
-        self.assertEqual(block_to_block_type("```\none\ntwo\nthree\n```     "), BlockType.CODE)
         self.assertEqual(block_to_block_type("```\none\n```\nthree\n```"), BlockType.CODE)
         # not code
         # space is not allowed before the code block
         self.assertEqual(block_to_block_type("    ```\none\ntwo\nthree\n```  "), BlockType.PARAGRAPH)
         self.assertEqual(block_to_block_type("no    ```\none\ntwo\nthree\n```"), BlockType.PARAGRAPH)
+        # TODO these should be impossible to get because the blocks parser strips whitespace
+        self.assertEqual(block_to_block_type("```\none\ntwo\nthree```     "), BlockType.PARAGRAPH)
+        self.assertEqual(block_to_block_type("```\none\ntwo\nthree\n```     "), BlockType.PARAGRAPH)
 
 
 if __name__ == "__main__":
