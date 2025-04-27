@@ -77,6 +77,7 @@ This is another paragraph with _italic_ text and `code` here
             "<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
         )
 
+
     def test_codeblock(self):
         md = """
 ```
@@ -121,6 +122,7 @@ the **same** even with inline stuff
         html = node.to_html()
         self.assertEqual(html, expected)
 
+
     def test_headings(self):
         md = """#111
 
@@ -144,6 +146,37 @@ the **same** even with inline stuff
             html,
             "<div><p>#111</p><h1>111</h1><h2>222</h2><h3>333</h3><h4>444</h4><h5>555</h5><h6>666</h6><p>####### 777</p></div>",
         )
+
+
+    def test_list_unordered(self):
+        md = """ # Title
+
+- one
+-   two
+-  three
+"""
+        node = nodeconversion.markdown_to_html_tree(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h1>Title</h1><ul><li>one</li><li>two</li><li>three</li></ul></div>",
+        )
+
+
+    def test_list_ordered(self):
+        md = """ # Title
+
+1. one
+0.   two
+5.  three
+"""
+        node = nodeconversion.markdown_to_html_tree(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h1>Title</h1><ol><li>one</li><li>two</li><li>three</li></ol></div>",
+        )
+
 
 
 

@@ -66,6 +66,20 @@ def _block_quote_to_html_nodes(block: str):
     return ParentNode(f"blockquote", html_nodes)
 
 
+def _block_list_to_html_nodes(block: str, ordered: bool):
+    list_nodes = []
+    for line in block.splitlines():
+        if ordered:
+            start = line.index(". ")
+            stripped_line = line[start+2:].lstrip()
+        else:
+            stripped_line = line.lstrip().lstrip("-").lstrip()
+        child_nodes = _markdown_block_to_html_nodes_list(stripped_line)
+        list_nodes.append(ParentNode("li", child_nodes))
+
+    return ParentNode("ol" if ordered else "ul", list_nodes)
+
+
 def markdown_to_html_tree(markdown: str) -> ParentNode:
     nodes = []
     blocks = markdown_to_blocks(markdown)
@@ -76,8 +90,8 @@ def markdown_to_html_tree(markdown: str) -> ParentNode:
             case BlockType.HEADING: nodes.append(_block_heading_to_html_nodes(block))
             case BlockType.CODE: nodes.append(_block_code_to_html_nodes(block))
             case BlockType.QUOTE: nodes.append(_block_quote_to_html_nodes(block))
-            case BlockType.UNORDERED_LIST: pass
-            case BlockType.ORDERED_LIST: pass
+            case BlockType.UNORDERED_LIST: nodes.append(_block_list_to_html_nodes(block, False))
+            case BlockType.ORDERED_LIST: nodes.append(_block_list_to_html_nodes(block, True))
             case _: raise ValueError(f"Unhandled block type: {block_type}")
 
     return ParentNode("div", nodes)
