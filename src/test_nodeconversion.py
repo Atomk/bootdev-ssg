@@ -2,6 +2,7 @@ import unittest
 import nodeconversion
 from textnode import TextNode, TextType
 
+
 class TestNodeConversion(unittest.TestCase):
     def test_text_styles(self):
         input = TextNode("Hola", TextType.NORMAL)
@@ -57,6 +58,93 @@ class TestNodeConversion(unittest.TestCase):
         # TODO src is mandatory != ""
         # TODO alt text is mandatory (not really but helps debug and accessibility)
         pass
+
+
+class TestBlockNodeConversion(unittest.TestCase):
+    def test_paragraphs(self):
+        md = """
+This is **bolded** paragraph
+text in a p
+tag here
+
+This is another paragraph with _italic_ text and `code` here
+
+"""
+        node = nodeconversion.markdown_to_html_tree(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
+        )
+
+    def test_codeblock(self):
+        md = """
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+"""
+        node = nodeconversion.markdown_to_html_tree(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+        )
+
+
+    def test_quote(self):
+        expected = "<div><blockquote>This is <b>bolded</b> text and <i>italic</i> text\nin a <code>blockquote</code> tag.</blockquote></div>"
+
+        md = """
+>This is **bolded** text and _italic_ text
+>in a `blockquote` tag.
+"""
+        node = nodeconversion.markdown_to_html_tree(md)
+        html = node.to_html()
+        self.assertEqual(html, expected)
+
+        # ignore space after delimiters
+        md = """
+> This is **bolded** text and _italic_ text
+>    in a `blockquote` tag.
+"""
+        node = nodeconversion.markdown_to_html_tree(md)
+        html = node.to_html()
+        self.assertEqual(html, expected)
+
+        # ignore space before delimiters
+        md = """
+> This is **bolded** text and _italic_ text
+   >   in a `blockquote` tag.
+"""
+        node = nodeconversion.markdown_to_html_tree(md)
+        html = node.to_html()
+        self.assertEqual(html, expected)
+
+    def test_headings(self):
+        md = """#111
+
+# 111
+
+## 222
+
+### 333
+
+#### 444
+
+##### 555
+
+###### 666
+
+####### 777
+"""
+        node = nodeconversion.markdown_to_html_tree(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><p>#111</p><h1>111</h1><h2>222</h2><h3>333</h3><h4>444</h4><h5>555</h5><h6>666</h6><p>####### 777</p></div>",
+        )
+
 
 
 if __name__ == "__main__":
