@@ -3,6 +3,7 @@ from textnode import TextNode, TextType
 
 
 def text_to_textnodes(text: str) -> list[TextNode]:
+    """Converts a block of markdown text into a list of inline text nodes."""
     node = TextNode(text, TextType.NORMAL)
     new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
     new_nodes = split_nodes_delimiter(new_nodes, "_", TextType.ITALIC)

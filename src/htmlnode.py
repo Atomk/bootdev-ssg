@@ -15,8 +15,8 @@ class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         """
         No tag: this is plain text inside of another HTML node
-        No value: this is just a container for other elements (i.e. <ul>, <section>)
-        No children: this is a container for just text (i.e. <p>, <soan>, <h1>)
+        No value: this is just a container for other elements (i.e. `<ul>`, `<section>`)
+        No children: this is a container for just text (i.e. `<p>`, `<soan>`, `<h1>`)
         No props: the element has no attributes
         """
 
@@ -48,17 +48,21 @@ class LeafNode(HTMLNode):
 
     def to_html(self):
         if self.tag is None:
+            if self.value is None or self.value == "":
+                raise ValueError(f"A plain text node must have a value")
             return self.value
         if self.tag in ("img", "br", "hr"):
             return f"<{self.tag}{self.props_to_html()} />"
-        if self.tag in ("code", "pre"):
+        if self.value is None or self.value == "":
+            raise ValueError(f"Node with tag {self.tag} must have a value")
+        if self.tag == "code":
             return f"<{self.tag}{self.props_to_html()}>{escape_html(self.value)}</{self.tag}>"
         else:
             return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
 
 
 class ParentNode(HTMLNode):
-    def __init__(self, tag, children, props=None):
+    def __init__(self, tag: str, children, props=None):
         super().__init__(tag, None, children, props)
 
     def to_html(self):
