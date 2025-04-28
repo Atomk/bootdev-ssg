@@ -51,3 +51,11 @@ def _copy_directory_tree_inner(source_dir, dest_dir):
             shutil.copy(new_source, new_dest)
         else:
             raise Exception(f"Unrecognized file type at path: {new_source}")
+
+
+def extract_title(markdown: str):
+    for line in markdown.splitlines():
+        stripped = line.lstrip()
+        if stripped.startswith("# "):
+            return stripped.lstrip("#").strip().replace("\n", " ")
+    raise ValueError("Title not found")
