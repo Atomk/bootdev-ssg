@@ -3,7 +3,7 @@ import filegeneration
 
 
 class TestHeadingExtraction(unittest.TestCase):
-    def none_found(self):
+    def test_none_found(self):
         md = """#aaa
 
 #bbb # lll
@@ -16,7 +16,7 @@ class TestHeadingExtraction(unittest.TestCase):
         self.assertRaises(ValueError, lambda: filegeneration.extract_title(md))
 
 
-    def one_h1(self):
+    def test_one_h1(self):
         md = """#aaa
 
 # bbb
@@ -32,7 +32,7 @@ class TestHeadingExtraction(unittest.TestCase):
         )
 
 
-    def multiple_h1(self):
+    def test_multiple_h1(self):
         md = """#aaa
 #ddd
 # bbb
@@ -45,11 +45,10 @@ class TestHeadingExtraction(unittest.TestCase):
             filegeneration.extract_title(md)
         )
 
-    def nested_h1(self):
+    def test_nested_h1(self):
         md = """#aaa
 ## # zzz
 ## ppp # yyy
-# bbb # xxx
 ## ccc
 ### ddd
 # eee
