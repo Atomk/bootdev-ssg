@@ -86,6 +86,8 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
 
     markdown_html = markdown_to_html_tree(markdown).to_html()
     title = extract_title(markdown)
+    if not title:
+        raise Exception(f"Page must have a title: {from_path}")
 
     PLACEHOLDER_TITLE = "{{ Title }}"
     PLACEHOLDER_CONTENT = "{{ Content }}"
@@ -96,3 +98,34 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
     # Assumes any necessary directories already exist
     with open(dest_path, "w", encoding="utf-8") as f:
         f.write(replaced)
+
+
+def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str):
+    for p in (dir_path_content, template_path, dest_dir_path):
+        if not os.path.exists(p):
+            raise ValueError(f"Path does not exist: {p}")
+    for p in (dir_path_content, dest_dir_path):
+        if not os.path.isdir(p):
+            raise ValueError(f"Path must be a directory: {p}")
+    if not template_path.endswith(".html"):
+        raise ValueError(f"Template must be an HTML file: {template_path}")
+
+    def inner(source_dir: str, template: str, dest_dir: str):
+        for filename in os.listdir(source_dir):
+            new_source = os.path.join(source_dir, filename)
+            new_dest = os.path.join(dest_dir, filename)
+            if os.path.isdir(new_source):
+                os.mkdir(new_dest)
+                inner(new_source, template, new_dest)
+            elif os.path.isfile(new_source):
+                if not filename.endswith(".md"):
+                    raise Exception(f"Found non-Markdown source file: {new_source}")
+                new_dest_converted = new_dest.removesuffix(".md") + ".html"
+                generate_page(new_source, template, new_dest_converted)
+            else:
+                raise Exception(f"Unrecognized file type at path: {new_source}")
+
+    # TODO read the template file just once
+    # with open(template_path, encoding="utf-8") as f:
+    #     template = f.read()
+    inner(dir_path_content, template_path, dest_dir_path)

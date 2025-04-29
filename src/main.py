@@ -11,10 +11,10 @@ def main():
     static_dir_path = os.path.join(root_dir, "static")
     content_dir_path = os.path.join(root_dir, "content")
     filegeneration.copy_directory_tree(static_dir_path, public_dir_path)
-    filegeneration.generate_page(
-        os.path.join(content_dir_path, "index.md"),
+    filegeneration.generate_pages_recursive(
+        content_dir_path,
         os.path.join(root_dir, "template.html"),
-        os.path.join(public_dir_path, "index.html"),
+        public_dir_path,
     )
     print("Done")
 
