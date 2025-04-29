@@ -1,5 +1,8 @@
 import os
 import shutil
+from nodeconversion import (
+    markdown_to_html_tree,
+)
 
 
 # similar to shutil.rmtree()
@@ -59,3 +62,37 @@ def extract_title(markdown: str):
         if stripped.startswith("# "):
             return stripped.lstrip("#").strip().replace("\n", " ")
     raise ValueError("Title not found")
+
+
+def generate_page(from_path: str, template_path: str, dest_path: str):
+    for p in (from_path, template_path):
+        if not os.path.exists(p):
+            raise ValueError(f"Path does not exist: {p}")
+        if not os.path.isfile(p):
+            raise ValueError(f"Path must be a file: {p}")
+    if not from_path.endswith(".md"):
+        raise ValueError(f"Source must be a Markdown (.md) file: {from_path}")
+    if not template_path.endswith(".html"):
+        raise ValueError(f"Template must be an HTML file: {template_path}")
+    if not dest_path.endswith(".html"):
+        raise ValueError(f"Destination must use a .html extension: {dest_path}")
+
+    print(f"Generating page\n  from: {from_path}\n  to: {dest_path}\n  using: {template_path}")
+
+    with open(from_path, encoding="utf-8") as f:
+        markdown = f.read()
+    with open(template_path, encoding="utf-8") as f:
+        template = f.read()
+
+    markdown_html = markdown_to_html_tree(markdown).to_html()
+    title = extract_title(markdown)
+
+    PLACEHOLDER_TITLE = "{{ Title }}"
+    PLACEHOLDER_CONTENT = "{{ Content }}"
+    assert(PLACEHOLDER_TITLE in template)
+    assert(PLACEHOLDER_CONTENT in template)
+    replaced = template.replace(PLACEHOLDER_TITLE, title).replace(PLACEHOLDER_CONTENT, markdown_html)
+
+    # Assumes any necessary directories already exist
+    with open(dest_path, "w", encoding="utf-8") as f:
+        f.write(replaced)
