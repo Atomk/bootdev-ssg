@@ -28,4 +28,11 @@ From the repo's root directory:
 
 ## TODO
 
-- [ ] Move tests to a `test` dir
+- [ ] Move tests to a `test` dir?
+- [ ] Create new tests that use markdown files and assert that the conversion result is identical to the expected HTML file
+- [ ] Support nested bullet lists
+- [ ] Error for block that starts with "```" but has no corresponding closing delimiter
+- [ ] Allow code blocks to contain empty lines
+- [ ] Convert sequences of 3+ dashes to horizontal lines
+- [ ] Convert newlines to `<br />`
+- [ ] Remove all TODOs in code by fixing or documenting
