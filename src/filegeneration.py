@@ -64,7 +64,7 @@ def extract_title(markdown: str):
     raise ValueError("Title not found")
 
 
-def generate_page(from_path: str, template_path: str, dest_path: str):
+def generate_page(from_path: str, template_path: str, dest_path: str, url_base: str):
     for p in (from_path, template_path):
         if not os.path.exists(p):
             raise ValueError(f"Path does not exist: {p}")
@@ -94,13 +94,16 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
     assert(PLACEHOLDER_TITLE in template)
     assert(PLACEHOLDER_CONTENT in template)
     replaced = template.replace(PLACEHOLDER_TITLE, title).replace(PLACEHOLDER_CONTENT, markdown_html)
+    if url_base != "/":
+        # TODO this will also replace the content of code blocks but should not
+        replaced = replaced.replace(' href="/', f' href="{url_base}').replace(' src="/', f' src="{url_base}')
 
     # Assumes any necessary directories already exist
     with open(dest_path, "w", encoding="utf-8") as f:
         f.write(replaced)
 
 
-def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str):
+def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str, url_base: str):
     for p in (dir_path_content, template_path, dest_dir_path):
         if not os.path.exists(p):
             raise ValueError(f"Path does not exist: {p}")
@@ -121,7 +124,7 @@ def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir
                 if not filename.endswith(".md"):
                     raise Exception(f"Found non-Markdown source file: {new_source}")
                 new_dest_converted = new_dest.removesuffix(".md") + ".html"
-                generate_page(new_source, template, new_dest_converted)
+                generate_page(new_source, template, new_dest_converted, url_base)
             else:
                 raise Exception(f"Unrecognized file type at path: {new_source}")
 

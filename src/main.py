@@ -41,6 +41,7 @@ def main():
         content_dir_path,
         os.path.join(root_dir, "template.html"),
         output_dir_path,
+        url_base,
     )
     print("Done")
 
