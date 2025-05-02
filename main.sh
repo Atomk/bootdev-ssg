@@ -1,2 +1,3 @@
 # Just a convenient way to launch the SSG
-python3 src/main.py && cd public && python3 -m http.server 8888
+outputdir="docs"
+python3 src/main.py $outputdir && cd $outputdir && python3 -m http.server 8888
