@@ -27,7 +27,7 @@ def main():
         output_dir_name, url_base = parse_arguments()
     except Exception as e:
         print(f"There was en arror while parsing arguments:\n  {e}")
-        print("Usage:\n  main.py output-dir-name <base-url>\n")
+        print("Usage:\n  main.py <output_dir_name> [base_url]\n")
         sys.exit(1)
 
     script_path = os.path.realpath(__file__)

@@ -104,6 +104,20 @@ def generate_page(from_path: str, template_path: str, dest_path: str, url_base: 
 
 
 def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str, url_base: str):
+    """
+    Converts all Markdown files in a directory (and in all of its subdirectories)
+    into HTML pages. The hierarchy of directories is replicated at the new location.
+
+    All internal links in the Markdown files are expected to start with the "/" character.
+
+    Params:
+        dir_path_content: Directory containing all source Markdown files
+        template_path: HTML template file used for conversion
+        dest_dir_path: Directory that will contain the generated output.
+            Must be an existing path.
+        url_base: used to add a prefix to all links.
+    """
+
     for p in (dir_path_content, template_path, dest_dir_path):
         if not os.path.exists(p):
             raise ValueError(f"Path does not exist: {p}")
@@ -112,6 +126,9 @@ def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir
             raise ValueError(f"Path must be a directory: {p}")
     if not template_path.endswith(".html"):
         raise ValueError(f"Template must be an HTML file: {template_path}")
+
+    print(f"Output directory: {dest_dir_path}")
+    print(f"URL base: {url_base}")
 
     def inner(source_dir: str, template: str, dest_dir: str):
         for filename in os.listdir(source_dir):
